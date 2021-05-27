@@ -55,6 +55,14 @@
     <button>Trigger a Global Error</button>
   </section>
 
+  <script src="https://cdn.trackjs.com/agent/v3/latest/t.js"></script>
+  <script>
+    window.TrackJS && TrackJS.install({ 
+      token: "22b348289b3645d98b77631968515d32"
+      // for more configuration options, see https://docs.trackjs.com
+    });
+  </script>
+
   <script>
     let calculateBtn = document.querySelector('#calculate');
     calculateBtn.addEventListener('click', () => {
@@ -62,11 +70,81 @@
       let firstNum = document.querySelector('#first-num').value;
       let secondNum = document.querySelector('#second-num').value;
       let operator = document.querySelector('#operator').value;
-      output.innerHTML = eval(`${firstNum} ${operator} ${secondNum}`);
+      try {
+        output.innerHTML = eval(`${firstNum} ${operator} ${secondNum}`);
+      } catch(err) {
+        console.error('Calculator Error');
+      } finally {
+        console.log('Finally');
+      }
     });
 
     let errorBtns = Array.from(document.querySelectorAll('#error-btns > button'));
     // TODO - Make buttons functional
+    errorBtns[0].addEventListener('click', () => {
+      console.log("Console Log Demo");
+      TrackJS.track("Testing TrackJS!");
+    });
+
+    errorBtns[1].addEventListener('click', () => {
+      console.log("Console Error Demo");
+    });
+
+    errorBtns[2].addEventListener('click', () => {
+      console.dir(errorBtns[2]);
+    });
+
+    errorBtns[3].addEventListener('click', () => {
+      console.dirxml(document.body);
+    });
+
+    errorBtns[4].addEventListener('click', () => {
+      console.group();
+    });
+
+    errorBtns[5].addEventListener('click', () => {
+      console.groupEnd();
+    });
+
+    let people = [ { name: "Alvin Wang", age: 19 },
+        { name: "Bob", age: 20 },
+        { name: "Joe", age: 15 },
+        { name: "Carl", age: 24 } ]
+
+    errorBtns[6].addEventListener('click', () => {
+      console.table(people);
+    });
+
+    errorBtns[7].addEventListener('click', () => {
+      console.time();
+    });
+
+    errorBtns[8].addEventListener('click', () => {
+      console.timeEnd();
+    });
+
+    errorBtns[9].addEventListener('click', () => {
+      const first = () => { second(); };
+      const second = () => { third(); };
+      const third = () => { fourth(); };
+      const fourth = () => { console.trace(); };
+      first();
+    });
+
+    class CustomError extends Error {
+      constructor(message) {
+        super(message);
+        this.name = "CustomError";
+      }
+    }
+
+    function test() {
+      throw new CustomError("Oops!");
+    }
+
+    errorBtns[10].addEventListener('click', () => {
+      test();
+    });
   </script>
 </body>
 </html>
